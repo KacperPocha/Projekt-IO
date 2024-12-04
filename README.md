@@ -22,27 +22,4 @@
   - Ograniczenia sprzętowe
 
 5. Prosty diagram aplikacji
-[ Dane wejściowe (pickle i etykiety) ]
-                |
-                V
-  [ Wczytywanie i przygotowanie danych ]
-                |
-                V
-      [ Wizualizacja danych ]
-                |
-                V
-      [ Budowanie modelu ]
-                |
-                V
-      [ Trenowanie modelu ]
-                |
-                V
-      [ Ewaluacja modelu ]
-                |
-                V
-  [ Predykcja pojedynczego obrazu ]
-                |
-                V
-[ Mapowanie predykcji na etykiety ]
-
-
+  Dane wejściowe (pickle i etykiety)  >  Wczytywanie i przygotowanie danych  >  Wizualizacja danych  >  Budowanie modelu  >    Trenowanie modelu  >  Ewaluacja modelu  >  Predykcja pojedynczego obrazu  >  Mapowanie predykcji na etykiety
