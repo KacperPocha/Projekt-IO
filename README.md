@@ -21,5 +21,5 @@
   - Problemy z konfiguracją środowiska
   - Ograniczenia sprzętowe
 
-5. Prosty diagram aplikacji
+5. Prosty diagram aplikacji:
   Dane wejściowe (pickle i etykiety)  >  Wczytywanie i przygotowanie danych  >  Wizualizacja danych  >  Budowanie modelu  >    Trenowanie modelu  >  Ewaluacja modelu  >  Predykcja pojedynczego obrazu  >  Mapowanie predykcji na etykiety
