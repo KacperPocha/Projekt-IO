@@ -23,3 +23,10 @@
 
 5. Prosty diagram aplikacji:
   Dane wejściowe (pickle i etykiety)  >  Wczytywanie i przygotowanie danych  >  Wizualizacja danych  >  Budowanie modelu  >    Trenowanie modelu  >  Ewaluacja modelu  >  Predykcja pojedynczego obrazu  >  Mapowanie predykcji na etykiety
+
+
+  Aby uruchomić program sklonuj repozytorium z githuba, a następnie 
+  - Utwórz wirtualne środowisko python -m venv myVenv
+  - Aktywuj środwisko .\myVenv\Scripts\Activate
+  - Zainstaluj biblioteki pip install -r requirements.txt
+
