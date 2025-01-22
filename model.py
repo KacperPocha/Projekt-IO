@@ -13,7 +13,7 @@ from tensorflow.keras.optimizers import Adam  # Importuje optymalizator Adam
 
 
 # Katalog główny dla zbioru danych
-dataset_path = './data/'  # Ścieżka do folderu, w którym znajdują się dane (zmień na odpowiednią)
+dataset_path = './data/data'  # Ścieżka do folderu, w którym znajdują się dane (zmień na odpowiednią)
 
 train_folder = 'train'  # Folder z danymi treningowymi
 test_folder = 'test'  # Folder z danymi testowymi
@@ -129,3 +129,39 @@ label_descriptions = {  # Słownik z opisami poszczególnych klas
     'D-6': 'Przystanek tramwajowy',
     'D-7': 'Stacja rowerów publicznych'
 }
+
+# Budowanie modelu CNN (Convolutional Neural Network) do klasyfikacji obrazów
+traffic_model = Sequential([  # Tworzymy model sekwencyjny
+    Conv2D(32, (3, 3), activation='relu', input_shape=(IMAGE_HEIGHT, IMAGE_WIDTH, 3)),  # Pierwsza warstwa konwolucyjna
+    MaxPooling2D((2, 2)),  # Warstwa max-pooling do redukcji wymiarów
+    Conv2D(64, (3, 3), activation='relu'),  # Druga warstwa konwolucyjna
+    MaxPooling2D((2, 2)),  # Warstwa max-pooling
+    Flatten(),  # Spłaszczenie wyników do jednowymiarowej tablicy
+    Dense(128, activation='relu'),  # Warstwa gęsta z 128 neuronami
+    Dropout(0.5),  # Warstwa dropout w celu uniknięcia overfittingu
+    Dense(NUM_CLASSES, activation='softmax')  # Warstwa wyjściowa z liczbą neuronów odpowiadającą liczbie klas
+])
+
+# Kompilacja modelu
+traffic_model.compile(
+    optimizer=Adam(learning_rate=0.001),  # Optymalizator Adam z określoną szybkością uczenia
+    loss='sparse_categorical_crossentropy',  # Funkcja straty dla klasyfikacji wieloklasowej
+    metrics=['accuracy']  # Metrika - dokładność
+)
+
+# Określanie liczby kroków na epokę i walidacji
+steps_per_epoch = np.ceil(train_dataset.samples / train_dataset.batch_size).astype(int)  # Obliczamy liczbę kroków na epokę
+val_steps = np.ceil(test_dataset.samples / test_dataset.batch_size).astype(int)  # Obliczamy liczbę kroków walidacyjnych
+
+# Trening modelu
+training_history = traffic_model.fit(
+    train_dataset,  # Dane treningowe
+    steps_per_epoch=steps_per_epoch,  # Liczba kroków na epokę
+    epochs=10,  # Liczba epok
+    validation_data=test_dataset,  # Dane walidacyjne
+    validation_steps=val_steps,  # Liczba kroków walidacyjnych
+    verbose=1  # Wyświetlanie postępu treningu
+)
+
+# Zapisanie wytrenowanego modelu
+traffic_model.save('ReadyModel.h5')  # Zapisanie modelu do pliku
