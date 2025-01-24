@@ -165,3 +165,45 @@ training_history = traffic_model.fit(
 
 # Zapisanie wytrenowanego modelu
 traffic_model.save('ReadyModel.h5')  # Zapisanie modelu do pliku
+
+
+
+def plot_metrics(history):
+    training_acc = history.history['accuracy']
+    validation_acc = history.history['val_accuracy']
+    training_loss = history.history['loss']
+    validation_loss = history.history['val_loss']
+
+    epochs_range = range(1, len(training_acc) + 1)
+
+    plt.figure(figsize=(14, 6))  # Większy wykres dla lepszej widoczności
+
+    # Wykres dokładności
+    plt.subplot(1, 2, 1)
+    plt.plot(epochs_range, training_acc, marker='o', linestyle='-', color='green', label='Train Accuracy')
+    plt.plot(epochs_range, validation_acc, marker='o', linestyle='--', color='orange', label='Validation Accuracy')
+    plt.title('Model Accuracy', fontsize=16)
+    plt.xlabel('Epochs', fontsize=12)
+    plt.ylabel('Accuracy', fontsize=12)
+    plt.xticks(fontsize=10)
+    plt.yticks(fontsize=10)
+    plt.legend(fontsize=10)
+    plt.grid(True, linestyle='--', alpha=0.6)  # Dodanie siatki
+
+    # Wykres straty
+    plt.subplot(1, 2, 2)
+    plt.plot(epochs_range, training_loss, marker='s', linestyle='-', color='blue', label='Train Loss')
+    plt.plot(epochs_range, validation_loss, marker='s', linestyle='--', color='red', label='Validation Loss')
+    plt.title('Model Loss', fontsize=16)
+    plt.xlabel('Epochs', fontsize=12)
+    plt.ylabel('Loss', fontsize=12)
+    plt.xticks(fontsize=10)
+    plt.yticks(fontsize=10)
+    plt.legend(fontsize=10)
+    plt.grid(True, linestyle='--', alpha=0.6)
+
+    plt.tight_layout()  # Lepsze rozmieszczenie wykresów
+    plt.show()
+
+# Rysowanie wykresów z historii treningu
+plot_metrics(training_history)
