@@ -118,3 +118,69 @@ train_data_gen = train_image_generator.flow_from_directory(
     shuffle=True,  # Przemieszanie danych przed rozpoczęciem trenowania
     target_size=(IMG_HEIGHT, IMG_WIDTH)  # Zmiana rozmiaru obrazów do docelowych wymiarów
 )
+# Ładowanie wytrenowanego modelu
+model = load_model('ReadyModel.h5')  # Ładowanie zapisanej wstępnie wytrenowanej sieci neuronowej
+
+def fetch_and_preprocess_image(url, img_height, img_width):
+    """
+    Pobieranie obrazu z URL i wstępne przetwarzanie.
+    """
+    try:
+        response = requests.get(url, stream=True)  # Wysłanie żądania HTTP GET, aby pobrać obraz
+        response.raise_for_status()  # Sprawdzenie, czy odpowiedź jest poprawna (status 200)
+        image = Image.open(response.raw)  # Otworzenie obrazu z odpowiedzi HTTP
+        image = image.resize((img_height, img_width))  # Zmiana rozmiaru obrazu na docelowy wymiar
+        image_arr = np.array(image.convert('RGB'))  # Konwersja obrazu do formatu RGB (jeśli to konieczne)
+        image_arr = image_arr / 255.0  # Normalizacja obrazu (skalowanie wartości pikseli do zakresu [0, 1])
+        return image_arr.reshape(1, img_height, img_width, 3), image  # Zwrócenie obrazu jako tablicy i oryginalnego obrazu
+    except requests.exceptions.RequestException as e:
+        print(f"Błąd pobierania obrazu z URL {url}: {e}")  # Obsługa błędów pobierania obrazu
+        return None, None  # Zwrócenie None w przypadku błędu
+    except Exception as e:
+        print(f"Błąd przetwarzania obrazu z URL {url}: {e}")  # Obsługa innych błędów
+        return None, None  # Zwrócenie None w przypadku błędu
+
+def predict_image(model, image_arr, class_indices, class_names):
+    """
+    Predykcja klasy dla obrazu.
+    """
+    try:
+        result = model.predict(image_arr, verbose=0)  # Wykonanie predykcji na obrazie
+        predicted_index = np.argmax(result)  # Znalezienie indeksu klasy o najwyższej prawdopodobieństwie
+        predicted_code = list(class_indices.keys())[predicted_index]  # Odczytanie kodu znaku
+        predicted_description = class_names.get(predicted_code, "Nieznany znak")  # Odczytanie opisu znaku
+        return predicted_code, predicted_description  # Zwrócenie kodu i opisu przewidywanego znaku
+    except Exception as e:
+        print(f"Błąd podczas przewidywania: {e}")  # Obsługa błędów podczas predykcji
+        return None, "Błąd przewidywania"  # Zwrócenie błędu w przypadku problemu z predykcją
+
+def testing_v2(model, dict_of_urls, class_names, img_height=IMG_HEIGHT, img_width=IMG_WIDTH):
+ 
+    """
+    Testowanie modelu na obrazach z URL-ów.
+    """
+    for actual_code, url in dict_of_urls.items():  # Iterowanie przez każdy znak i URL
+        print(f"Przetwarzam znak: {actual_code} z URL: {url}")  # Wyświetlanie aktualnego znaku i URL
+        
+        # Pobranie i przetwarzanie obrazu
+        image_arr, image = fetch_and_preprocess_image(url, img_height, img_width)
+        
+        if image_arr is not None:  # Jeśli obraz został poprawnie przetworzony
+            # Predykcja
+            predicted_code, predicted_description = predict_image(
+                model, image_arr, train_data_gen.class_indices, class_names
+            )
+        
+            # Pobranie rzeczywistej klasy
+            actual_description = class_names.get(actual_code, "Nieznany znak")
+            
+            # Wyświetlenie wyników
+            plt.imshow(image)  # Wyświetlenie obrazu
+            plt.title(f'Rzeczywisty znak: "{actual_description}". Model przewidział: "{predicted_description}".')  # Tytuł wykresu z wynikami
+            plt.axis('off')  # Ukrycie osi na wykresie
+            plt.show()  # Pokazanie wykresu z obrazem
+        else:
+            print(f"Nie udało się pobrać lub przetworzyć obrazu z URL: {url}")  # Obsługa błędów podczas pobierania obrazu
+
+# Testowanie modelu na wybranych obrazach
+testing_v2(model, dict_of_urls, class_names)  # Uruchomienie funkcji testowej z przekazaniem modelu, słownika URL-i i nazw klas
