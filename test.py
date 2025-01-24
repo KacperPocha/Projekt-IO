@@ -113,7 +113,7 @@ class_names = {
 train_image_generator = ImageDataGenerator(rescale=1. / 255)  # Normalizacja obrazów do zakresu 0-1
 train_data_gen = train_image_generator.flow_from_directory(
     batch_size=100,  # Rozmiar paczki danych
-    directory='./data/train',  # Ustaw ścieżkę do folderu z danymi treningowymi
+    directory='./data/data/train',  # Ustaw ścieżkę do folderu z danymi treningowymi
     class_mode='sparse',  # Tryb klasyfikacji, w tym przypadku "sparse" dla liczb całkowitych
     shuffle=True,  # Przemieszanie danych przed rozpoczęciem trenowania
     target_size=(IMG_HEIGHT, IMG_WIDTH)  # Zmiana rozmiaru obrazów do docelowych wymiarów
